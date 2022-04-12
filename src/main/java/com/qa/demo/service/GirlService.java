@@ -1,37 +1,46 @@
-@Service //stores main bsuiness logic of the application
-public class GirlService {
+package com.qa.demo.service;
+import java.util.List;
+import java.util.Optional;
 
-	//LIST - WE havent got DB yet so we need to store data somewhere 
-	//private List<Girl> girlies = new ArrayList<>(); dont need in here any more as we are going in the (girlrepo)
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.qa.demo.domain.Girl;
+import com.qa.demo.repo.GirlRepo;
+
+@Service //stores main business logic of the application
+public class GirlService implements ServiceIF<Girl>{
+
+	private GirlRepo repo;
 	
-	private GirlRepository repo;
-	
-	public GirlService(GirlRepository repo) {
+	@Autowired
+	public GirlService(GirlRepo repo) {
+		super();
 		this.repo = repo;
 	}
 	
 	//CRUD Functionality 
-	public Girl createGirl(Girl g) {
+	
+	//INSERT INTO Girl
+	public Girl create(Girl g) {
 	Girl created = this.repo.save(g);	
-//	this.girlies.add(g);
-//	Girl created = this.girlies.get(this.girlies.size()-1);
 	return created;
 	}
 	
-	 public List<Girl> getAllGirlies() {
-//		 return this.girlies;
+	//SELECT * FROM Girl
+	 public List<Girl> getAll() {
 		 return this.repo.findAll();
 	 }
 	 
-	 public Girl getGirl(Integer id) {
-//		 return this.girlies.get(id);
+	 //SELECT * FROM Girl WHERE ID =
+	 public Girl getOne(Integer id) {
 		Optional <Girl> found = this.repo.findById(id);
 		return found.get();
 	 }
 	 
-	 public Girl replaceGirl(Integer id, Girl newGirl) {
-//		 Girl body = this.girlies.set(id, newGirl);
-//		 return body;
+	 //UPDATE
+	 public Girl replace(Integer id, Girl newGirl) {
 		 Girl existing = this.repo.findById(id).get();
 		 existing.setAge(newGirl.getAge());
 		 existing.setHairColor(newGirl.getHairColor());
@@ -39,11 +48,19 @@ public class GirlService {
 		 Girl updated = this.repo.save(existing);
 		 return updated;
 	 }
-	 
-	public void removeGirl(@PathVariable Integer id) {
-//		this.girlies.remove(id.intValue());
+	 //DELETE FROM Girl WHERE ID =
+	public void remove(@PathVariable Integer id) {
 		this.repo.deleteById(id);
 	}
 	 
-	
+	//SELECT * FROM Girl WHERE name =
+	public List <Girl> getGirliesByName(String name) {
+		List <Girl> found = this.repo.findByNameIgnoreCase(name);
+		return found;
+	 }
+	//SELECT * FROM Girl WHERE age=
+	public List <Girl> getGirliesByAge(Integer age) {
+		List <Girl> found = this.repo.findByAge(age);
+		return found;
+	 }
 }

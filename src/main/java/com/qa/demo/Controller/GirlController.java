@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.qa.demo.domain.Girl;
 import com.qa.demo.service.GirlService;
 
+
 @RestController 
 //tells Spring that this is a Controller
 
 public class GirlController {
 
-	//LIST - WE havent got DB yet so we need to store data somewhere 
-	//private List<Girl> girlies = new ArrayList<>(); // this has now been moved to service class
 	
 	private GirlService service;
 	
@@ -40,27 +39,27 @@ public class GirlController {
 	public ResponseEntity<Girl> createGirl(@RequestBody Girl g) {
 //		this.girlies.add(g); //added to service class
 //		Girl created = this.girlies.get(this.girlies.size()-1);
-		Girl created = this.service.createGirl(g); //put in after replacing above in service
+		Girl created = this.service.create(g); //put in after replacing above in service
 		ResponseEntity<Girl> response = new ResponseEntity<Girl>(created, HttpStatus.CREATED);
 		return response;
 	}	
 	//read all
 	@GetMapping("/getAll") //200 - OK
 	public ResponseEntity<List<Girl>> getAllGirlies() {
-		return ResponseEntity.ok(this.service.getAllGirlies()); //put in after replacing above in service
+		return ResponseEntity.ok(this.service.getAll()); //put in after replacing above in service
 	//	return ResponseEntity.ok(this.girlies);replaced to service
 	}
 	//read one
 	@GetMapping("/get/{id}") //200 - OK
 	public Girl getGirl(@PathVariable Integer id) {
-		return this.service.getGirl(id); //put in after replacing below in service
+		return this.service.getOne(id); //put in after replacing below in service
 		//return this.girlies.get(id); replaced to service
 	}
 	//update
 	@PutMapping("/replace/{id}") //202 - accepted
 	public ResponseEntity<Girl> replaceGirl(@PathVariable Integer id, @RequestBody Girl newGirl) {
 		//Girl body = this.girlies.set(id, newGirl); replaced to service
-		Girl body = this.service.replaceGirl(id, newGirl); //put in after replacing above in service
+		Girl body = this.service.replace(id, newGirl); //put in after replacing above in service
 		ResponseEntity<Girl> response = new ResponseEntity<Girl>(body, HttpStatus.ACCEPTED);
 		return response;
 	}
@@ -68,8 +67,20 @@ public class GirlController {
 	@DeleteMapping("/remove/{id}") //204 - no content
 		public ResponseEntity<?> removeGirl(@PathVariable Integer id) {
 			//this.girlies.remove(id.intValue()); replace to service
-			this.service.removeGirl(id); //put in after replacing above in service
+			this.service.remove(id); //put in after replacing above in service
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	//readByName
+	@GetMapping("/getByName/{name}")
+	public ResponseEntity<List<Girl>> getGirlByName(@PathVariable String name) {
+		List<Girl> found = this.service.getGirliesByName(name);
+		return ResponseEntity.ok(found);
+	}
+	
+	@GetMapping("/getByAge/{age}")
+	public ResponseEntity<List<Girl>> getGirlByAge(@PathVariable Integer age) {
+		List<Girl> found = this.service.getGirliesByAge(age);
+		return ResponseEntity.ok(found);
 	}
 		
 }
